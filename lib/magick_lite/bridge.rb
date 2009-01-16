@@ -20,6 +20,10 @@ module MagickLite
     attach_function :AcquireExceptionInfo, [], :pointer
     attach_function :ResizeImage, [:pointer, :long, :long, :pointer, :double, :pointer], :pointer
 
+    attach_function :DestroyExceptionInfo, [:pointer], :pointer
+    attach_function :DestroyImageInfo, [:pointer], :pointer
+    attach_function :DestroyImage, [:pointer], :pointer
+
     def self.version
       GetMagickVersion(nil)
     end

@@ -4,6 +4,11 @@ A lite replacement for RMagick, mini_magick and ImageScience!
 
 == Installation
 
+== Dependencies
+
+* ImageMagick
+* ruby-ffi (ffi gem)
+
 == Examples
 
 === Hope you enjoy!

@@ -10,5 +10,10 @@ module MagickLite
       s.field :attributes,  :pointer
     end
     @@@
+
+    def self.release(ptr)
+      ptr = Bridge.DestroyImageInfo(ptr)
+      Bridge.free_object(ptr)
+    end
   end
 end

@@ -1,5 +1,5 @@
 module MagickLite
-  class ExceptionInfo < FFI::Struct
+  class ExceptionInfo < FFI::ManagedStruct
     @@@
     struct do |s|
       s.name 'struct _ExceptionInfo'
@@ -15,6 +15,11 @@ module MagickLite
 
     def description
       self[:description]
+    end
+
+    def self.release(ptr)
+      ptr = Bridge.DestroyExceptionInfo(ptr)
+      Bridge.free_object(ptr)
     end
   end
 end
