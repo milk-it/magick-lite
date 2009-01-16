@@ -1,0 +1,14 @@
+module MagickLite
+  class ImageInfo < FFI::Struct
+    @@@
+    struct do |s|
+      s.name 'struct _ImageInfo'
+      s.include 'magick/MagickCore.h'
+      s.field :signature,   :long
+      s.field :filename,    :string
+      s.field :magick,      :string
+      s.field :attributes,  :pointer
+    end
+    @@@
+  end
+end

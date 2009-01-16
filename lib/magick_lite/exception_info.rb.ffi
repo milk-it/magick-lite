@@ -1,0 +1,20 @@
+module MagickLite
+  class ExceptionInfo < FFI::Struct
+    @@@
+    struct do |s|
+      s.name 'struct _ExceptionInfo'
+      s.include 'magick/MagickCore.h'
+      s.field :description,     :string
+      s.field :error_number,    :int
+    end
+    @@@
+
+    def error_number
+      self[:error_number]
+    end
+
+    def description
+      self[:description]
+    end
+  end
+end

@@ -1,0 +1,41 @@
+module MagickLite
+  class Image < FFI::Struct
+    @@@
+    struct do |s|
+      s.name 'struct _Image'
+      s.include 'magick/MagickCore.h'
+      s.field :columns,     :long
+      s.field :rows,        :long
+      s.field :attributes,  :pointer
+    end
+    @@@
+
+    def width
+      self[:columns]
+    end
+
+    def height
+      self[:rows]
+    end
+
+    def self.from_blob(blob)
+      image_info = Bridge.CloneImageInfo(nil)
+      exception_info = ExceptionInfo.new(Bridge.AcquireExceptionInfo())
+      image = Bridge.BlobToImage(image_info, blob, blob.size, exception_info)
+      raise exception_info.description if exception_info.error_number != 0
+      return Image.new(image)
+    end
+
+    def resize(w, h)
+      exception_info = ExceptionInfo.new(Bridge.AcquireExceptionInfo())
+      Bridge.ResizeImage(self, w, h, FilterType, blur, exception_info)
+    end
+
+    # Get an image attribute
+=begin
+    def [](name)
+      Bridge.GetImageAttribute(self, name)
+    end
+=end
+  end
+end
