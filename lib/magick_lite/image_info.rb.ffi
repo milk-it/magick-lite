@@ -1,5 +1,5 @@
 module MagickLite
-  class ImageInfo < FFI::Struct
+  class ImageInfo < FFI::ManagedStruct
     @@@
     struct do |s|
       s.name 'struct _ImageInfo'
@@ -11,9 +11,26 @@ module MagickLite
     end
     @@@
 
+    def filename
+      self[:filename]
+    end
+
+    # This will raise an error, unfortunelly we can't assign values
+    # to :string fields on the current version of FFI
+    def filename=(fn)
+      self[:filename] = fn
+    end
+
     def self.release(ptr)
       ptr = Bridge.DestroyImageInfo(ptr)
-      Bridge.free_object(ptr)
+    end
+
+    def self.clone(obj)
+      new(Bridge.CloneImageInfo(obj))
+    end
+
+    def self.build
+      new(Bridge.AcquireImageInfo())
     end
   end
 end

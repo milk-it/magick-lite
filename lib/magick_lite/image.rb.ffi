@@ -1,12 +1,12 @@
 module MagickLite
-  class Image < FFI::Struct
+  class Image < FFI::ManagedStruct
     @@@
     struct do |s|
       s.name 'struct _Image'
       s.include 'magick/MagickCore.h'
-      s.field :columns,     :long
-      s.field :rows,        :long
-      s.field :attributes,  :pointer
+      s.field :columns,     :ulong
+      s.field :rows,        :ulong
+      s.field :signature,   :ulong
     end
     @@@
 
@@ -19,28 +19,48 @@ module MagickLite
     end
 
     def self.from_blob(blob)
-      image_info = Bridge.CloneImageInfo(nil)
-      exception_info = ExceptionInfo.new(Bridge.AcquireExceptionInfo())
+      image_info = ImageInfo.build
+      exception_info = ExceptionInfo.build
       image = Bridge.BlobToImage(image_info, blob, blob.size, exception_info)
       raise exception_info.description if exception_info.error_number != 0
       return Image.new(image)
     end
 
+    def self.from_file(filename) # Not working
+      obj = build
+      Bridge.FileToImage(obj, filename)
+      obj
+    end
+
     def resize(w, h)
-      exception_info = ExceptionInfo.new(Bridge.AcquireExceptionInfo())
-      Bridge.ResizeImage(self, w, h, FilterType, blur, exception_info)
+      exception_info = ExceptionInfo.build
+      Image.new(Bridge.ResizeImage(self, w, h, 0, 1.0, exception_info))
+    end
+
+    def write(filename)
+      image_info = ImageInfo.build
+      image_info.filename = filename
+      Bridge.WriteImage(image_info, self)
+    end
+
+    def save(filename)
+      exception_info = ExceptionInfo.build
+      Bridge.ImageToFile(self, filename, exception_info)
+    end
+
+    def to_blob #:nodoc:
+      # TODO
     end
 
     def self.release(ptr)
       ptr = Bridge.DestroyImage(ptr)
-      Bridge.free_object(ptr)
     end
 
-    # Get an image attribute
-=begin
-    def [](name)
-      Bridge.GetImageAttribute(self, name)
+    private
+
+    def self.build
+      image_info = ImageInfo.build
+      new(Bridge.AcquireImage(image_info))
     end
-=end
   end
 end

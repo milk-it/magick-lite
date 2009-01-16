@@ -19,7 +19,10 @@ module MagickLite
 
     def self.release(ptr)
       ptr = Bridge.DestroyExceptionInfo(ptr)
-      Bridge.free_object(ptr)
+    end
+
+    def self.build
+      ExceptionInfo.new(Bridge.AcquireExceptionInfo())
     end
   end
 end
